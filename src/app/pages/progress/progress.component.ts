@@ -22,7 +22,7 @@ export class ProgressComponent implements OnInit {
       this.progreso = 95;
     }
     this.progreso = this.progreso + valor;
-    
+
   }
 
 }
