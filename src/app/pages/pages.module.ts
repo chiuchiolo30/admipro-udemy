@@ -1,6 +1,7 @@
 /** Módulo independiente para los componentes que estan dentro de pages*/
 
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PAGES_ROUTES } from './pages.routes';
 
 import { SharedModuele } from '../shared/shared.module';
@@ -20,6 +21,7 @@ import { Graficas1Component } from './graficas1/graficas1.component';
 // temporal
 import { IncrementadorComponent } from '../components/incrementador/incrementador.component';
 import { GraficoDonaComponent } from '../components/grafico-dona/grafico-dona.component';
+import { AccoutSettingsComponent } from './accout-settings/accout-settings.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +30,8 @@ import { GraficoDonaComponent } from '../components/grafico-dona/grafico-dona.co
         ProgressComponent,
         Graficas1Component,
         IncrementadorComponent,
-        GraficoDonaComponent
+        GraficoDonaComponent,
+        AccoutSettingsComponent
     ],
     exports: [
         PagesComponent,
@@ -40,7 +43,8 @@ import { GraficoDonaComponent } from '../components/grafico-dona/grafico-dona.co
         SharedModuele,
         PAGES_ROUTES,
         FormsModule,
-        ChartsModule
+        ChartsModule,
+        CommonModule
 
 
     ]
