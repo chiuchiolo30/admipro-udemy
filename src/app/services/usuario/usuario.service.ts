@@ -6,6 +6,7 @@ import { URL_SERVICIOS } from '../../config/config';
 import { map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { SubirArchivoService } from '../subir-archivo/subir-archivo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class UsuarioService {
 
   constructor(
     public http: HttpClient,
-    public router: Router
+    public router: Router,
+    public _subirArchivoService: SubirArchivoService
     ) {
       this.cargarStorage();
       console.log('Servicio de usuario listo!');
@@ -125,6 +127,54 @@ export class UsuarioService {
                    }));
 
    }
+  // ============================================================================
+  // método que llama al servicio 'actualizar usuario' del backend
+  // ============================================================================
+   actualizarUsuario( usuario: Usuario ) {
 
+    let url = URL_SERVICIOS + '/usuario/' + usuario._id;
+
+    url += '?token=' + this.token;
+
+
+    return this.http.put( url, usuario )
+            .pipe(map( (resp: any) => {
+                  const usuarioDB: Usuario = resp.usuario;
+
+                  this.guardarStorage( usuarioDB._id, this.token, usuarioDB);
+                  Swal.fire({
+                    title: 'Usuario actualizado',
+                    text: usuario.nombre,
+                    icon: 'success'
+                  });
+                  return true;
+            }));
+
+   }
+
+// ============================================================================
+// Método para cambiar imagen
+// ============================================================================
+  cambiarImagen( archivo: File, id: string ) {
+
+    this._subirArchivoService.subirArchivo( archivo, 'usuarios', id )
+        .then( (resp: any) => {
+
+            const usuarioDB: Usuario = resp.usuario;
+            this.usuario.img = resp.usuario.img;
+
+            this.guardarStorage( id, this.token, usuarioDB);
+
+            Swal.fire({
+              title: 'Imagen actualizada',
+              text: this.usuario.nombre,
+              icon: 'success'
+            });
+
+        })
+        .catch( resp => {
+            console.log(resp);
+        });
+  }
 
 }
