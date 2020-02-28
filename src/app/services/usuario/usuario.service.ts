@@ -22,7 +22,7 @@ export class UsuarioService {
     public _subirArchivoService: SubirArchivoService
     ) {
       this.cargarStorage();
-      console.log('Servicio de usuario listo!');
+      // console.log('Servicio de usuario listo!');
 
       }
 
@@ -139,9 +139,11 @@ export class UsuarioService {
 
     return this.http.put( url, usuario )
             .pipe(map( (resp: any) => {
-                  const usuarioDB: Usuario = resp.usuario;
 
-                  this.guardarStorage( usuarioDB._id, this.token, usuarioDB);
+                  if ( usuario._id === this.usuario._id ) {
+                    const usuarioDB: Usuario = resp.usuario;
+                    this.guardarStorage( usuarioDB._id, this.token, usuarioDB);
+                  }
                   Swal.fire({
                     title: 'Usuario actualizado',
                     text: usuario.nombre,
@@ -177,4 +179,40 @@ export class UsuarioService {
         });
   }
 
+// ============================================================================
+// Método para cargar los usuarios de la DB, llamando el servicio del backend
+// ============================================================================
+  cargarUsuarios( desde: number = 0) {
+
+    const url = `${URL_SERVICIOS}/usuario?desde=${desde}`;
+    return this.http.get( url );
+  }
+
+// ============================================================================
+// Método para buscar usuarios, llamando el servicio del backend
+// ============================================================================
+
+  buscarUsuarios( termino: string) {
+
+    const url = `${URL_SERVICIOS}/busqueda/coleccion/usuarios/${ termino }`;
+    return this.http.get( url )
+                .pipe( map( (resp: any) => resp.usuarios));
+
+  }
+// ============================================================================
+// Método para borrar un usuario, llamando el servicio del backend
+// ============================================================================
+  borrarUsuario( id: string ) {
+    let url = `${URL_SERVICIOS}/usuario/${id}`;
+    url += `?token=${this.token}`;
+    return this.http.delete(url)
+                .pipe( map( resp => {
+                    Swal.fire(
+                      'Usuario borrado!',
+                      'El usuario fue eliminado correctamente',
+                      'success'
+                        );
+                    return true;
+                }));
+  }
 }

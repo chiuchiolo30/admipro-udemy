@@ -4,7 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SidebarService {
-
+// ============================================================================
+// ------------------------- Menu lateral -------------------------------------
+// ============================================================================
   menu: any = [
     {
       titulo: 'Principal',
@@ -15,6 +17,15 @@ export class SidebarService {
         { titulo: 'Gràficas', url: '/grafica1' },
         { titulo: 'Promesas', url: '/promesas' },
         { titulo: 'Rxjs', url: '/rxjs' }
+      ]
+    },
+    {
+      titulo: 'Mantenimiento',
+      icono: 'mdi mdi-folder-lock-open',
+      submenu: [
+        { titulo: 'Usuarios', url: '/usuarios' },
+        { titulo: 'Hospitales', url: '/hospitales' },
+        { titulo: 'Medicos', url: '/medicos' }
       ]
     }
   ];

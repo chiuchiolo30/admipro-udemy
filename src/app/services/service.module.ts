@@ -9,6 +9,7 @@ import { SettingService,
          LoginGuardGuard,
          SubirArchivoService
         } from './services.index';
+import { ModalUploadService } from '../components/modal-upload/modal-upload.service';
 
 
 
@@ -24,7 +25,8 @@ import { SettingService,
     SidebarService,
     UsuarioService,
     LoginGuardGuard,
-    SubirArchivoService
+    SubirArchivoService,
+    ModalUploadService
   ]
 })
 export class ServiceModule { }

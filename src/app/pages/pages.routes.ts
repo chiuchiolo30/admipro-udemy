@@ -10,6 +10,8 @@ import { RxjsComponent } from './rxjs/rxjs.component';
 import { LoginGuardGuard } from '../services/services.index';
 import { ProfileComponent } from './profile/profile.component';
 
+import { UsuariosComponent } from './usuarios/usuarios.component';
+
 /**rutas para todas las paginas que estan dentro de pages*/
 
 const pagesRoutes: Routes = [
@@ -17,6 +19,7 @@ const pagesRoutes: Routes = [
       component: PagesComponent,
       canActivate: [ LoginGuardGuard ],
       children: [
+        //   Principales
           { path: 'dashboard', component: DashboardComponent, data: { titulo: 'Dashboard'} },
           { path: 'progress', component: ProgressComponent, data: { titulo: 'Progress'} },
           { path: 'grafica1', component: Graficas1Component, data: { titulo: 'Grafica'} },
@@ -25,6 +28,8 @@ const pagesRoutes: Routes = [
           { path: 'accout-settings', component: AccoutSettingsComponent, data: { titulo: 'Ajustes del Tema'} },
           { path: 'perfil', component: ProfileComponent, data: { titulo: 'Perfil de usuario'} },
 
+        //   Mantenimientos
+          { path: 'usuarios', component: UsuariosComponent, data: { titulo: 'Mantenimiento de Usuarios'} },
           { path: '', pathMatch: 'full', redirectTo: '/dashboard' }
                 ]
     }

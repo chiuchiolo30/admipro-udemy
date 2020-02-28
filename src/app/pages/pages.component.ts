@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+// para que se carguen todos los plugins del template
 declare function init_plugins();
 
 
