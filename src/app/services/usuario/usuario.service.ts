@@ -1,12 +1,23 @@
 import { Injectable } from '@angular/core';
-import { Usuario } from '../../models/usuario.model';
 import { HttpClient } from '@angular/common/http';
-import { URL_SERVICIOS } from '../../config/config';
-
-import { map } from 'rxjs/operators';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+
+import { URL_SERVICIOS } from '../../config/config';
+// Models
+import { Usuario } from '../../models/usuario.model';
+
+// Services
 import { SubirArchivoService } from '../subir-archivo/subir-archivo.service';
+
+// SweetAlert2
+import Swal from 'sweetalert2';
+
+// RxJs
+  import { map, catchError } from 'rxjs/operators';
+  import { Observable } from 'rxjs/internal/Observable';
+  import { throwError } from 'rxjs/internal/observable/throwError';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +26,8 @@ export class UsuarioService {
 
   usuario: Usuario;
   token: string;
+
+  menu: any = [];
 
   constructor(
     public http: HttpClient,
@@ -40,22 +53,26 @@ export class UsuarioService {
       if ( localStorage.getItem('token') ) {
         this.token    = localStorage.getItem( 'token' );
         this.usuario  = JSON.parse( localStorage.getItem('usuario') );
+        this.menu  = JSON.parse( localStorage.getItem('menu') );
       } else {
         this.token    = '';
         this.usuario  = null;
+        this.menu  = [];
       }
     }
    // ============================================================================
    // Centralizado del guardado en el localstorage
    // ============================================================================
-   guardarStorage( id: string, token: string, usuario: Usuario) {
+   guardarStorage( id: string, token: string, usuario: Usuario, menu: any) {
 
         localStorage.setItem('id', id );
         localStorage.setItem('token', token );
         localStorage.setItem('usuario', JSON.stringify(usuario) );
+        localStorage.setItem('menu', JSON.stringify(menu) );
 
         this.usuario  = usuario;
         this.token    = token;
+        this.menu     = menu;
    }
    // ============================================================================
    // Método logout
@@ -63,9 +80,12 @@ export class UsuarioService {
   logout() {
     this.usuario  = null;
     this.token    = '';
+    this.menu  = [];
 
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('menu');
+    localStorage.removeItem('id');
 
     this.router.navigate(['/login']);
   }
@@ -77,7 +97,8 @@ export class UsuarioService {
 
     return this.http.post( url, { token })
                 .pipe(map( (resp: any) => {
-                      this.guardarStorage( resp.id, resp.token, resp.Usuario);
+                      console.log(resp);
+                      this.guardarStorage( resp.id, resp.token, resp.Usuario, resp.menu);
                       return true;
                 }));
    }
@@ -96,15 +117,20 @@ export class UsuarioService {
     const url = `${ URL_SERVICIOS }/login`;
     return this.http.post( url, usuario )
             .pipe(map( (resp: any) => {
+                 // grabar en el localstorage
+                 this.guardarStorage( resp.id, resp.token, resp.Usuario, resp.menu);
+                 return true;
+                  }),
+                  catchError( (err: any) => {
+                    Swal.fire({
+                      title: 'Error en el login',
+                      text: err.error.mensaje,
+                      icon: 'error'
+                    });
+                    return throwError( err );
+                  })
+            );
 
-   // grabar en el localstorage
-                 this.guardarStorage( resp.id, resp.token, resp.Usuario);
-              // localStorage.setItem('id', resp.id );
-              // localStorage.setItem('token', resp.token );
-              // localStorage.setItem('usuario', JSON.stringify(resp.Usuario) );
-
-              return true;
-            }));
    }
 
 
@@ -124,8 +150,16 @@ export class UsuarioService {
                          icon: 'success'
                        });
                         return resp.usuario;
-                   }));
-
+                   }),
+                       catchError( (err: any) => {
+                        Swal.fire({
+                          title: err.error.mensaje,
+                          text: err.error.errors.message,
+                          icon: 'error'
+                        });
+                        return throwError( err );
+                      })
+                  );
    }
   // ============================================================================
   // método que llama al servicio 'actualizar usuario' del backend
@@ -142,7 +176,7 @@ export class UsuarioService {
 
                   if ( usuario._id === this.usuario._id ) {
                     const usuarioDB: Usuario = resp.usuario;
-                    this.guardarStorage( usuarioDB._id, this.token, usuarioDB);
+                    this.guardarStorage( usuarioDB._id, this.token, usuarioDB, this.menu);
                   }
                   Swal.fire({
                     title: 'Usuario actualizado',
@@ -150,7 +184,16 @@ export class UsuarioService {
                     icon: 'success'
                   });
                   return true;
-            }));
+            }),
+                  catchError( (err: any) => {
+                    Swal.fire({
+                      title: err.error.mensaje,
+                      text: err.error.errors.message,
+                      icon: 'error'
+                    });
+                    return throwError( err );
+            })
+            );
 
    }
 
@@ -165,7 +208,7 @@ export class UsuarioService {
             const usuarioDB: Usuario = resp.usuario;
             this.usuario.img = resp.usuario.img;
 
-            this.guardarStorage( id, this.token, usuarioDB);
+            this.guardarStorage( id, this.token, usuarioDB, this.menu );
 
             Swal.fire({
               title: 'Imagen actualizada',
@@ -214,5 +257,21 @@ export class UsuarioService {
                         );
                     return true;
                 }));
+  }
+
+// ============================================================================
+// método que verifica que no haya email iguales, si el email ingresado es
+// es único retorna 1, de lo contrari, 0. ´´´´sin usar´´´´
+// ============================================================================
+  checkEmailNotTaken( email: string ) {
+    const url = `${ URL_SERVICIOS }/usuario`;
+    return this.http.get( url )
+              .pipe(
+                map( (resp: any) => resp.usuarios ),
+                map( users => users.filter( (user: any) => user.email === email)),
+                map( users => {
+                  return !users.lenght;
+                })
+              );
   }
 }

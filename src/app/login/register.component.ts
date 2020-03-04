@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../services/services.index';
 import { Usuario } from '../models/usuario.model';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 
-// import swal from 'sweetalert';
-// const swal = require('sweetalert2');
 
 // Para inicializar los plugins
 declare function init_plugins();
@@ -45,19 +44,22 @@ export class RegisterComponent implements OnInit {
 // Usando react forms
     this.forma = new FormGroup({
         nombre: new FormControl( null, Validators.required ),
-        correo: new FormControl( null, [ Validators.required, Validators.email ] ),
+        correo: new FormControl( null,
+                               [ Validators.required,
+                                 Validators.email
+                               ]),
         password: new FormControl( null, Validators.required ),
         password2: new FormControl( null, Validators.required ),
         condiciones: new FormControl( false )
     }, { validators: this.sonIguales( 'password', 'password2' ) });
 
-    this.forma.setValue({
-      nombre: 'Test',
-      correo: 'test@test.com',
-      password: '123456',
-      password2: '123456',
-      condiciones: true
-    });
+    // this.forma.setValue({
+    //   nombre: 'Test',
+    //   correo: 'test@test.com',
+    //   password: '123456',
+    //   password2: '123456',
+    //   condiciones: true
+    // });
   }
 
   registrarUsuario() {
@@ -86,6 +88,19 @@ export class RegisterComponent implements OnInit {
     this._usuarioService.crearUsuario( usuario )
                   .subscribe( resp => this.router.navigate(['/login'])); // si obtiene una respuesta positiva, navega a la pagina del login
 
+  }
+// ============================================================================
+//  método para verificar si el email es valido ````sin usar````
+// ============================================================================
+  validateEmailNotTaken( control: AbstractControl ) {
+      return this._usuarioService.checkEmailNotTaken( control.value )
+                .pipe(
+                  map( res => {
+                    console.log(res);
+
+                    return res ? null : { emailTaken: true};
+                  })
+                );
   }
 
 }
