@@ -21,7 +21,7 @@ export class MedicoComponent implements OnInit {
 
   hospital: Hospital = new Hospital('');
 
-  
+
 
   constructor(
     public _medicoService: MedicoService,
@@ -56,7 +56,7 @@ export class MedicoComponent implements OnInit {
   cargarMedico( id: string) {
 
     this._medicoService.cargarMedico( id )
-          .subscribe( medico => {
+          .subscribe( (medico: any) => {
               console.log(medico);
 
               this.medico = medico;
@@ -77,14 +77,15 @@ export class MedicoComponent implements OnInit {
           .subscribe( medico => {
 
               this.medico._id = medico._id;
-              this.router.navigate(['/medico', medico._id]);
+              this.router.navigate(['/medicos']);
           });
   }
 
   cambioHospital( id: string ) {
-
-    this._hospitalService.obtenerHospital( id )
-          .subscribe( (hospital: Hospital) => this.hospital = hospital );
+    if (id) {
+      this._hospitalService.obtenerHospital( id )
+            .subscribe( (hospital: Hospital) => this.hospital = hospital);
+    } else { return; }
 
   }
   cambiarFoto() {

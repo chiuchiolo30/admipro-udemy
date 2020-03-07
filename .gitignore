@@ -7,7 +7,8 @@
 
 # dependencies
 /node_modules
-/backend-server
+/backendServer
+
 
 # IDEs and editors
 /.idea

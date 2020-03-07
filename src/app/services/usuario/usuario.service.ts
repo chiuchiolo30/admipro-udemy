@@ -14,7 +14,6 @@ import Swal from 'sweetalert2';
 
 // RxJs
   import { map, catchError } from 'rxjs/operators';
-  import { Observable } from 'rxjs/internal/Observable';
   import { throwError } from 'rxjs/internal/observable/throwError';
 
 
@@ -53,7 +52,7 @@ export class UsuarioService {
       if ( localStorage.getItem('token') ) {
         this.token    = localStorage.getItem( 'token' );
         this.usuario  = JSON.parse( localStorage.getItem('usuario') );
-        // this.menu  = JSON.parse( localStorage.getItem('menu') );
+        this.menu  = JSON.parse( localStorage.getItem('menu') );
       } else {
         this.token    = '';
         this.usuario  = null;
@@ -119,7 +118,7 @@ export class UsuarioService {
             .pipe(map( (resp: any) => {
                  // grabar en el localstorage
                  console.log(resp);
-                 this.guardarStorage( resp.id, resp.token, resp.usuario, resp.menu);
+                 this.guardarStorage( resp.id, resp.token, resp.Usuario, resp.menu);
                  return true;
                   }),
                   catchError( (err: any) => {
