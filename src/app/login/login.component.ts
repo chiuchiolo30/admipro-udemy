@@ -24,12 +24,12 @@ export class LoginComponent implements OnInit {
   constructor(
     public router: Router,
     public _usuarioService: UsuarioService
-    ) { 
-      
+    ) {
+
     }
 
   ngOnInit() {
-    
+
     init_plugins();
     this.googleInit();
 
@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit {
     if ( this.email.length > 1) {
       this.recuerdame = true;
     }
-
   }
 
 // para iniciar sesión con Google
@@ -84,11 +83,6 @@ export class LoginComponent implements OnInit {
     );
 
     this._usuarioService.login( usuario, forma.value.recuerdame )
-                .subscribe( correcto  => this.router.navigate(['/dashboard']));
-
-
-
-  //  this.router.navigate([ '/dashboard' ]);
-
+                .subscribe( ()  => this.router.navigate(['/dashboard']));
   }
 }

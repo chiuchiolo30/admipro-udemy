@@ -53,7 +53,7 @@ export class UsuarioService {
       if ( localStorage.getItem('token') ) {
         this.token    = localStorage.getItem( 'token' );
         this.usuario  = JSON.parse( localStorage.getItem('usuario') );
-        this.menu  = JSON.parse( localStorage.getItem('menu') );
+        // this.menu  = JSON.parse( localStorage.getItem('menu') );
       } else {
         this.token    = '';
         this.usuario  = null;
@@ -114,11 +114,12 @@ export class UsuarioService {
         localStorage.removeItem( 'email' );
     }
 
-    const url = `${ URL_SERVICIOS }/login`;
-    return this.http.post( url, usuario )
+    const url = `${URL_SERVICIOS}/login`;
+    return this.http.post( url, usuario)
             .pipe(map( (resp: any) => {
                  // grabar en el localstorage
-                 this.guardarStorage( resp.id, resp.token, resp.Usuario, resp.menu);
+                 console.log(resp);
+                 this.guardarStorage( resp.id, resp.token, resp.usuario, resp.menu);
                  return true;
                   }),
                   catchError( (err: any) => {
@@ -127,6 +128,7 @@ export class UsuarioService {
                       text: err.error.mensaje,
                       icon: 'error'
                     });
+                    console.log('ERROR!', err);
                     return throwError( err );
                   })
             );
@@ -257,21 +259,5 @@ export class UsuarioService {
                         );
                     return true;
                 }));
-  }
-
-// ============================================================================
-// método que verifica que no haya email iguales, si el email ingresado es
-// es único retorna 1, de lo contrari, 0. ´´´´sin usar´´´´
-// ============================================================================
-  checkEmailNotTaken( email: string ) {
-    const url = `${ URL_SERVICIOS }/usuario`;
-    return this.http.get( url )
-              .pipe(
-                map( (resp: any) => resp.usuarios ),
-                map( users => users.filter( (user: any) => user.email === email)),
-                map( users => {
-                  return !users.lenght;
-                })
-              );
   }
 }

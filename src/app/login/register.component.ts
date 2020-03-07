@@ -53,13 +53,13 @@ export class RegisterComponent implements OnInit {
         condiciones: new FormControl( false )
     }, { validators: this.sonIguales( 'password', 'password2' ) });
 
-    // this.forma.setValue({
-    //   nombre: 'Test',
-    //   correo: 'test@test.com',
-    //   password: '123456',
-    //   password2: '123456',
-    //   condiciones: true
-    // });
+    this.forma.setValue({
+      nombre: 'Test',
+      correo: 'test@test.com',
+      password: '123456',
+      password2: '123456',
+      condiciones: true
+    });
   }
 
   registrarUsuario() {
@@ -92,15 +92,15 @@ export class RegisterComponent implements OnInit {
 // ============================================================================
 //  método para verificar si el email es valido ````sin usar````
 // ============================================================================
-  validateEmailNotTaken( control: AbstractControl ) {
-      return this._usuarioService.checkEmailNotTaken( control.value )
-                .pipe(
-                  map( res => {
-                    console.log(res);
+  // validateEmailNotTaken( control: AbstractControl ) {
+  //     return this._usuarioService.checkEmailNotTaken( control.value )
+  //               .pipe(
+  //                 map( res => {
+  //                   console.log(res);
 
-                    return res ? null : { emailTaken: true};
-                  })
-                );
-  }
+  //                   return res ? null : { emailTaken: true};
+  //                 })
+  //               );
+  // }
 
 }
